@@ -1,0 +1,507 @@
+/* Josh's Confetti 🎉 — Options Page Styles */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:            #0f0f1a;
+  --surface:       #1a1a2e;
+  --surface2:      #16213e;
+  --border:        rgba(255,255,255,0.08);
+  --text:          #e8e8f0;
+  --text-muted:    #8888aa;
+  --accent:        #a29bfe;
+  --accent2:       #fd79a8;
+  --active-bg:     rgba(162,155,254,0.18);
+  --active-border: #a29bfe;
+  --radius:        12px;
+  --t:             0.14s ease;
+  --card-pad:      16px;
+  --card-gap:      12px;
+  --section-gap:   12px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ── Page shell ───────────────────────────────── */
+.page {
+  max-width: 960px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 22px 20px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-gap);
+}
+
+/* ── Header ───────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 2px;
+}
+
+.header-icon {
+  font-size: 40px;
+  line-height: 1;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 10px rgba(162,155,254,0.55));
+}
+
+.header-title {
+  font-size: 22px;
+  font-weight: 700;
+  background: linear-gradient(90deg, #a29bfe, #fd79a8, #ffd93d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header-sub {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-top: 1px;
+}
+
+/* ── Two-column grid ──────────────────────────── */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--section-gap);
+  align-items: stretch;   /* cards in a row grow to equal height */
+}
+
+/* ── Cards ────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--card-pad);
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-gap);
+}
+
+.card-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.sparkle { color: #ffd93d; }
+
+/* ── Sliders ──────────────────────────────────── */
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.slider-label { font-size: 12px; color: var(--text-muted); }
+.slider-val   { font-size: 13px; font-weight: 700; }
+.slider-val.accent { color: var(--accent); }
+
+input[type="range"].slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--surface2);
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"].slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  box-shadow: 0 0 0 3px rgba(162,155,254,0.22);
+  transition: box-shadow var(--t);
+}
+input[type="range"].slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 0 5px rgba(162,155,254,0.32);
+}
+input[type="range"].slider::-moz-range-thumb {
+  width: 15px; height: 15px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer; border: none;
+}
+
+/* ── Size preview canvas ──────────────────────── */
+.preview-wrap {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  flex: 1;              /* fills remaining card height */
+  display: flex;
+  flex-direction: column;
+  min-height: 88px;
+}
+
+.preview-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 5px 0 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+#size-preview {
+  display: block;
+  width: 100%;
+  flex: 1;
+}
+
+/* ── Pill buttons ─────────────────────────────── */
+.pill-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 13px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: border-color var(--t), background var(--t), transform var(--t);
+}
+.pill:hover { border-color: var(--accent); transform: translateY(-1px); }
+.pill.active {
+  border-color: var(--active-border);
+  background: var(--active-bg);
+  color: #fff;
+  box-shadow: 0 0 0 3px rgba(162,155,254,0.14);
+}
+.pill-icon { font-size: 13px; line-height: 1; }
+
+/* ── Checkboxes ───────────────────────────────── */
+.check-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.check-label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 11px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: var(--surface2);
+  cursor: pointer;
+  transition: border-color var(--t), background var(--t);
+}
+.check-label:hover { border-color: var(--accent); }
+.check-label:has(.dir-cb:checked) {
+  border-color: var(--active-border);
+  background: var(--active-bg);
+}
+
+.dir-cb { display: none; }
+
+.check-box {
+  flex-shrink: 0;
+  width: 16px; height: 16px;
+  border-radius: 4px;
+  border: 2px solid var(--text-muted);
+  background: var(--surface);
+  position: relative;
+  transition: border-color var(--t), background var(--t);
+}
+.dir-cb:checked + .check-box {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+.dir-cb:checked + .check-box::after {
+  content: '';
+  position: absolute;
+  left: 3px; top: 0;
+  width: 5px; height: 8px;
+  border: 2px solid #fff;
+  border-top: none; border-left: none;
+  transform: rotate(45deg);
+}
+.check-text { font-size: 12px; }
+
+/* ── Repeat count row ─────────────────────────── */
+.repeat-count-row {
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.repeat-count-row.visible { display: flex; }
+
+/* ── Explosion mode grid ──────────────────────── */
+.mode-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+  flex: 1;              /* stretch to fill card height alongside sibling */
+}
+
+.mode-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 3px;
+  padding: 10px 6px;
+  border-radius: 9px;
+  border: 1.5px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color var(--t), background var(--t), transform var(--t);
+}
+.mode-btn:hover { border-color: var(--accent2); transform: translateY(-2px); }
+.mode-btn.active {
+  border-color: var(--active-border);
+  background: var(--active-bg);
+  box-shadow: 0 0 0 3px rgba(162,155,254,0.14);
+}
+.mode-arrow { font-size: 18px; line-height: 1; }
+.mode-name  { font-size: 11px; font-weight: 600; }
+.mode-desc  { font-size: 10px; color: var(--text-muted); line-height: 1.3; }
+.mode-btn.active .mode-desc { color: rgba(255,255,255,0.45); }
+
+/* ── Color swatches ───────────────────────────── */
+.swatch-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 2px;
+}
+
+.swatch {
+  width: 40px; height: 40px;
+  border-radius: 8px;
+  cursor: pointer;
+  position: relative;
+  border: 2px solid rgba(255,255,255,0.05);
+  flex-shrink: 0;
+  transition: border-color var(--t), transform var(--t);
+}
+.swatch:hover { border-color: rgba(255,255,255,0.4); transform: scale(1.1); }
+
+.swatch-x {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700;
+  color: #fff; opacity: 0;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+  background: rgba(0,0,0,0.35);
+  border-radius: 6px;
+  pointer-events: none;
+  transition: opacity var(--t);
+}
+.swatch:hover .swatch-x { opacity: 1; }
+
+.swatch-add {
+  width: 40px; height: 40px;
+  border-radius: 8px;
+  border: 2px dashed var(--text-muted);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 20px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: border-color var(--t), color var(--t);
+}
+.swatch-add:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── URL triggers ─────────────────────────────── */
+.card-hint-top {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-top: -4px;
+}
+
+.trigger-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.trigger-row {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+}
+
+.trigger-input {
+  flex: 1;
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  padding: 7px 11px;
+  font-size: 12px;
+  outline: none;
+  transition: border-color var(--t);
+}
+.trigger-input:focus { border-color: var(--accent); }
+.trigger-input::placeholder { color: var(--text-muted); }
+
+.trigger-del {
+  flex-shrink: 0;
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color var(--t), color var(--t), background var(--t);
+}
+.trigger-del:hover {
+  border-color: #ff6b6b;
+  color: #ff6b6b;
+  background: rgba(255,107,107,0.1);
+}
+
+.btn-add-url {
+  align-self: flex-start;
+  padding: 7px 16px;
+  border-radius: 8px;
+  border: 1.5px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: background var(--t);
+}
+.btn-add-url:hover { background: var(--active-bg); }
+
+/* ── Keyboard shortcut info ───────────────────── */
+.card-info {
+  background: linear-gradient(135deg,
+    rgba(162,155,254,0.07) 0%,
+    rgba(253,121,168,0.07) 100%);
+  border-color: rgba(162,155,254,0.18);
+  gap: 9px;
+}
+
+.shortcut-title { font-weight: 600; font-size: 13px; }
+
+.shortcut-body {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.shortcut-url {
+  background: var(--surface2);
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-family: 'SF Mono', 'Cascadia Code', 'Monaco', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  border: 1px solid var(--border);
+  user-select: all;
+}
+
+.btn-copy {
+  padding: 2px 10px;
+  border-radius: 4px;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 11px;
+  transition: border-color var(--t), color var(--t);
+}
+.btn-copy:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── Hints ────────────────────────────────────── */
+.card-hint {
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* ── Save row ─────────────────────────────────── */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-top: 4px;
+}
+
+.btn-save {
+  padding: 10px 30px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(90deg, #a29bfe, #fd79a8);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  box-shadow: 0 4px 16px rgba(162,155,254,0.32);
+  transition: opacity var(--t), transform var(--t), box-shadow var(--t);
+}
+.btn-save:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 22px rgba(162,155,254,0.42);
+}
+.btn-save:active { transform: translateY(0); }
+
+.save-feedback {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6bcb77;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.save-feedback.visible { opacity: 1; }
+
+/* ── Responsive ───────────────────────────────── */
+@media (max-width: 620px) {
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+  .mode-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  body { min-width: unset; }
+  .page { padding: 16px 14px 28px; }
+}

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Josh's Confetti 🎉 — Settings</title>
+  <link rel="stylesheet" href="options.css" />
+</head>
+<body>
+  <div class="page">
+
+    <header class="header">
+      <div class="header-icon">🎉</div>
+      <div>
+        <h1 class="header-title">Josh's Confetti 🎉</h1>
+        <p class="header-sub">Configure your celebration settings</p>
+      </div>
+    </header>
+
+    <!-- ── Row 1: Particle Count + Particle Size ────────────────────────── -->
+    <div class="grid-2">
+
+      <section class="card">
+        <h2 class="card-title"><span class="sparkle">✦</span> Particle Count</h2>
+        <div class="slider-header">
+          <span class="slider-label">Number of particles</span>
+          <span class="slider-val accent" id="particle-count-val">150</span>
+        </div>
+        <input type="range" class="slider" id="particle-count" min="10" max="1000" step="10" value="150" />
+        <p class="card-hint">High amounts may affect performance</p>
+      </section>
+
+      <section class="card">
+        <h2 class="card-title"><span class="sparkle">✦</span> Particle Size</h2>
+        <div class="slider-header">
+          <span class="slider-label">Size of particles</span>
+          <span class="slider-val accent" id="particle-size-val">10</span>
+        </div>
+        <input type="range" class="slider" id="particle-size" min="3" max="50" step="1" value="10" />
+        <div class="preview-wrap">
+          <p class="preview-label">Preview</p>
+          <canvas id="size-preview" width="300" height="68"></canvas>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ── Row 2: Confetti Type + Explosion Mode ────────────────────────── -->
+    <!-- Paired because both contain option grids and reach similar heights  -->
+    <div class="grid-2">
+
+      <section class="card">
+        <h2 class="card-title"><span class="sparkle">✦</span> Confetti Type</h2>
+        <div class="pill-group" id="type-group">
+          <button class="pill" data-value="classic"  data-group="confettiType"><span class="pill-icon">📄</span> Classic</button>
+          <button class="pill" data-value="stars"    data-group="confettiType"><span class="pill-icon">⭐</span> Stars</button>
+          <button class="pill" data-value="circles"  data-group="confettiType"><span class="pill-icon">🔵</span> Circles</button>
+          <button class="pill" data-value="ribbons"  data-group="confettiType"><span class="pill-icon">🎀</span> Ribbons</button>
+          <button class="pill" data-value="emoji"    data-group="confettiType"><span class="pill-icon">🥳</span> Emoji</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="card-title"><span class="sparkle">✦</span> Explosion Mode</h2>
+        <div class="mode-grid" id="mode-group">
+          <button class="mode-btn" data-value="bottom-up"    data-group="explosionMode">
+            <span class="mode-arrow">⬆️</span>
+            <span class="mode-name">Bottom-Up</span>
+            <span class="mode-desc">Ground burst upward</span>
+          </button>
+          <button class="mode-btn" data-value="top-down"     data-group="explosionMode">
+            <span class="mode-arrow">⬇️</span>
+            <span class="mode-name">Top-Down</span>
+            <span class="mode-desc">Shower from above</span>
+          </button>
+          <button class="mode-btn" data-value="center"       data-group="explosionMode">
+            <span class="mode-arrow">💥</span>
+            <span class="mode-name">Center</span>
+            <span class="mode-desc">Radial burst</span>
+          </button>
+          <button class="mode-btn" data-value="cannon-left"  data-group="explosionMode">
+            <span class="mode-arrow">➡️</span>
+            <span class="mode-name">Cannon Left</span>
+            <span class="mode-desc">From left edge</span>
+          </button>
+          <button class="mode-btn" data-value="cannon-right" data-group="explosionMode">
+            <span class="mode-arrow">⬅️</span>
+            <span class="mode-name">Cannon Right</span>
+            <span class="mode-desc">From right edge</span>
+          </button>
+          <button class="mode-btn" data-value="side-to-side" data-group="explosionMode">
+            <span class="mode-arrow">↔️</span>
+            <span class="mode-name">Side-to-Side</span>
+            <span class="mode-desc">Both sides fire</span>
+          </button>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ── Row 3: Animation Direction + Repeated Confetti ───────────────── -->
+    <!-- Paired because both are compact option sections                     -->
+    <div class="grid-2">
+
+      <section class="card">
+        <h2 class="card-title"><span class="sparkle">✦</span> Animation Direction</h2>
+        <div class="check-group" id="direction-group">
+          <label class="check-label">
+            <input type="checkbox" class="dir-cb" value="fall-down" />
+            <span class="check-box"></span>
+            <span class="check-text">⬇️ Fall Down</span>
+          </label>
+          <label class="check-label">
+            <input type="checkbox" class="dir-cb" value="rise-up" />
+            <span class="check-box"></span>
+            <span class="check-text">⬆️ Rise Up</span>
+          </label>
+          <label class="check-label">
+            <input type="checkbox" class="dir-cb" value="random" />
+            <span class="check-box"></span>
+            <span class="check-text">🔀 Random</span>
+          </label>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="card-title"><span class="sparkle">✦</span> Repeated Confetti</h2>
+        <div class="pill-group" id="repeat-mode-group">
+          <button class="pill" data-value="single"   data-group="repeatMode"><span class="pill-icon">🎯</span> Single Shot</button>
+          <button class="pill" data-value="repeated" data-group="repeatMode"><span class="pill-icon">🔁</span> Repeated</button>
+        </div>
+        <div class="repeat-count-row" id="repeat-count-row">
+          <div class="slider-header">
+            <span class="slider-label">Repeat count</span>
+            <span class="slider-val accent" id="repeat-count-val">3</span>
+          </div>
+          <input type="range" class="slider" id="repeat-count" min="1" max="10" step="1" value="3" />
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ── Colors ────────────────────────────────────────────────────────── -->
+    <section class="card">
+      <h2 class="card-title"><span class="sparkle">✦</span> Colors</h2>
+      <div id="color-swatches" class="swatch-grid"></div>
+      <p class="card-hint">Hover over colors to delete &bull; Click + to add new color</p>
+      <input type="color" id="color-picker" tabindex="-1"
+             style="visibility:hidden;position:absolute;width:0;height:0;padding:0;border:none" />
+    </section>
+
+    <!-- ── URL Triggers ───────────────────────────────────────────────────── -->
+    <section class="card">
+      <h2 class="card-title"><span class="sparkle">✦</span> URL Triggers</h2>
+      <p class="card-hint-top">Automatically trigger confetti when visiting specific URLs</p>
+      <div id="trigger-list" class="trigger-list"></div>
+      <button class="btn-add-url" id="add-trigger-btn">+ Add URL Trigger</button>
+      <p class="card-hint">Maximum 10 URLs</p>
+    </section>
+
+    <!-- ── Keyboard Shortcut ─────────────────────────────────────────────── -->
+    <section class="card card-info">
+      <p class="shortcut-title">⌨️ How to Setup Keyboard Shortcut</p>
+      <p class="shortcut-body">
+        Copy this URL:
+        <code class="shortcut-url" id="shortcut-url">chrome://extensions/shortcuts</code>
+        <button class="btn-copy" id="copy-shortcut-btn">Copy</button>
+      </p>
+    </section>
+
+    <!-- ── Save ──────────────────────────────────────────────────────────── -->
+    <div class="actions">
+      <button class="btn-save" id="save-btn">Save Settings</button>
+      <span class="save-feedback" id="save-feedback"></span>
+    </div>
+
+  </div>
+  <script src="options.js"></script>
+</body>
+</html>
