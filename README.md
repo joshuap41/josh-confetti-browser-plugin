@@ -21,7 +21,7 @@
 
 Check out the trailer to see Josh's Confetti in action:
 
-[joshs-confetti-trailer.mp4](joshs-confetti-trailer.mp4)
+[Click here to watch the demo video](./joshs-confetti-trailer.mp4)
 
 ---
 
