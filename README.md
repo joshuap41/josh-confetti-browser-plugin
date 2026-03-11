@@ -17,6 +17,14 @@
 
 ---
 
+## Demo
+
+Check out the trailer to see Josh's Confetti in action:
+
+[joshs-confetti-trailer.mp4](joshs-confetti-trailer.mp4)
+
+---
+
 ## What It Does
 
 Click the 🎉 toolbar icon on any webpage to fire a burst of confetti. Right-click the icon → **Options** to configure everything.
@@ -94,6 +102,7 @@ josh-confetti-cannon/
 ├── options.css            Settings page styles
 ├── options.js             Settings page logic
 ├── generate_icons.py      Run once to regenerate PNG icons (no dependencies required)
+├── joshs-confetti-trailer.mp4  Demo video
 └── icons/
     ├── icon16.png
     ├── icon32.png
