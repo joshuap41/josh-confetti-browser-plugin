@@ -1,123 +1,87 @@
-# Josh's Confetti 🎉
+# 🎉 Josh's Confetti
 
-> Celebrate anything — launch confetti on any webpage with a single click.
+> A Manifest V3 Chrome/Edge extension that fires celebratory confetti on any webpage.
 
----
-
-## Loading in Chrome / Edge
-
-1. Open Chrome and go to **`chrome://extensions`**
-   *(Edge users: go to `edge://extensions`)*
-2. Enable **Developer mode** using the toggle in the top-right corner
-3. Click **"Load unpacked"**
-4. Select the `josh-confetti-cannon` folder
-5. The 🎉 icon will appear in your toolbar — **pin it** for easy access by clicking the puzzle piece icon and pinning *Josh's Confetti*
-
-> To update after pulling new changes, return to `chrome://extensions` and click the **↺ refresh** icon on the extension card.
+![Josh's Confetti demo](joshsconfetti_v2_promo.gif)
 
 ---
 
-## Demo
+## Features
 
-Check out the trailer to see Josh's Confetti in action:
-
-[Click here to watch the demo video](./joshs-confetti-trailer.mp4)
+- **12 confetti types** — Classic, Stars, Circles, Ribbons, Emoji, Hearts, Diamonds, Triangles, Snowflakes, Sparks, Coins, Teardrops
+- **Density presets** — Low / Medium / High / Chaos
+- **Size presets** — Tiny / Small / Medium / Large
+- **7 explosion modes** — Bottom Up, Top Down, Center, Cannon L, Cannon R, Both Sides, Fireworks 🎆
+- **Animation speed** — Slow / Steady / Normal / Fast / Ludicrous
+- **Type-matched colors** — palette auto-updates to suit the selected confetti type
+- **Sound effects** — mode-aware pop/whoosh/cannon boom/fireworks (optional, off by default)
+- **URL triggers** — fire confetti automatically when a tab URL matches a pattern
+- **Keyboard shortcut** — `⌘B` / `Ctrl+B` (customizable)
+- **Repeat mode** — single shot or up to 10 repeated bursts
 
 ---
 
-## What It Does
+## Installation
 
-Click the 🎉 toolbar icon on any webpage to fire a burst of confetti. Right-click the icon → **Options** to configure everything.
+1. Clone or download this repository
+2. Go to `chrome://extensions`
+3. Enable **Developer mode** (top right)
+4. Click **Load unpacked** → select this directory
+5. Click the 🎉 toolbar icon on any webpage to fire
+
+---
+
+## Usage
+
+| Action | How |
+|---|---|
+| Fire confetti | Click the toolbar icon **or** press `⌘B` / `Ctrl+B` |
+| Open settings | Right-click the toolbar icon → **Options** |
+| Preview changes | Click **🎉 Preview Fire** inside the settings panel |
+| Auto-fire on a URL | Add a pattern under **URL Triggers** and save |
 
 ---
 
 ## Settings
 
-### Particle Count
-Slider from 10 to 1,000 — controls how many confetti pieces are launched per shot.
+All settings are persisted in `chrome.storage.sync` and available across devices.
 
-### Particle Size
-Slider from 3 to 50 — scales all confetti pieces up or down. A live preview updates as you drag.
-
-### Confetti Type
-| Type | Description |
+| Setting | Default |
 |---|---|
-| 📄 Classic | Rectangular paper pieces that tumble in 3D |
-| ⭐ Stars | 5-pointed stars |
-| 🔵 Circles | Simple filled dots |
-| 🎀 Ribbons | Wavy sinusoidal streamers |
-| 🥳 Emoji | Random celebration emoji (🎉🎊🌟🥳 and more) |
-
-### Animation Direction
-Controls gravity after launch — multiple can be selected at once:
-- **⬇️ Fall Down** — normal gravity, pieces fall toward the bottom
-- **⬆️ Rise Up** — reverse gravity, pieces float upward
-- **🔀 Random** — each piece independently picks a direction
-
-### Explosion Mode
-Controls where confetti originates:
-| Mode | Description |
-|---|---|
-| ⬆️ Bottom-Up | Ground burst, shoots upward like fireworks |
-| ⬇️ Top-Down | Shower from above |
-| 💥 Center | Radial burst from the middle of the page |
-| ➡️ Cannon Left | Fires from the left edge |
-| ⬅️ Cannon Right | Fires from the right edge |
-| ↔️ Side-to-Side | Both sides fire simultaneously |
-
-### Repeated Confetti
-- **🎯 Single Shot** — one burst per click
-- **🔁 Repeated** — fires multiple bursts in sequence (1–10 shots, 1.5 s apart). Shots layer on top of each other so particles from earlier bursts are still falling when the next one fires.
-
-### Colors
-A grid of color swatches used for all confetti pieces. Hover a swatch to delete it, click **+** to add any custom color via the color picker. Minimum 1, maximum 20 colors.
-
-### URL Triggers
-Add URL patterns (up to 10) to auto-fire confetti whenever you navigate to a matching page — great for checkout confirmations, sign-up success pages, or any celebration moment. Matching is a simple "contains" check against the full URL.
-
-**Example patterns:**
-```
-checkout/success
-/thank-you
-order-confirmed
-app.example.com/welcome
-```
-
-### Keyboard Shortcut
-Set a keyboard shortcut to fire confetti without clicking the toolbar icon:
-1. Copy the URL from the Options page (or type it manually): `chrome://extensions/shortcuts`
-2. Paste it in the address bar and press Enter
-3. Find **Josh's Confetti 🎉** and assign your preferred shortcut
+| Confetti type | Classic |
+| Density | Medium (500 particles) |
+| Size | Large |
+| Explosion mode | Fireworks |
+| Animation speed | Normal |
+| Repeat mode | Single |
+| Sound effects | Off |
 
 ---
 
-## File Structure
+## Running Tests
 
-```
-josh-confetti-cannon/
-├── manifest.json          Extension manifest (MV3)
-├── background.js          Service worker — handles clicks, URL triggers, repeated firing
-├── content.js             Confetti physics engine injected into pages
-├── options.html           Settings page UI
-├── options.css            Settings page styles
-├── options.js             Settings page logic
-├── generate_icons.py      Run once to regenerate PNG icons (no dependencies required)
-├── joshs-confetti-trailer.mp4  Demo video
-└── icons/
-    ├── icon16.png
-    ├── icon32.png
-    ├── icon48.png
-    └── icon128.png
-```
-
----
-
-## Regenerating Icons
-
-Icons are already included. If you ever need to regenerate them:
+No build step needed — tests run directly with Node.js:
 
 ```bash
-python3 generate_icons.py
+node tests/run.js
 ```
 
-No external packages required — uses Python's built-in `struct` and `zlib` modules.
+162 assertions across manifest integrity, defaults consistency, all confetti types, all explosion modes, physics correctness, UI structure, and regression guards.
+
+---
+
+## Architecture
+
+| File | Role |
+|---|---|
+| `background.js` | Service worker — handles clicks, keyboard shortcuts, URL triggers, and overlay injection |
+| `content.js` | Physics engine — canvas, particle simulation, shape renderers, sound synthesis |
+| `overlay.js` | Settings UI — Shadow DOM panel injected into the active page |
+| `options.js` | Thin shim — immediately opens the overlay and closes the options page |
+| `tests/run.js` | Full regression test suite |
+
+---
+
+## Version
+
+**v2.0** — See [past chats](https://cursor.sh) for full change history.
