@@ -27,13 +27,24 @@ const CHROME_URL_RE = /^(chrome|edge|chrome-extension):\/\//;
 
 let lastActiveTabId = null;
 
+/**
+ * Records the given tab ID as the most recently active user tab.
+ * Persists the value to chrome.storage.session so it survives service-worker restarts.
+ * @param {number} tabId - The ID of the tab to record.
+ * @returns {Promise<void>}
+ */
 async function setLastActiveTab(tabId) {
   lastActiveTabId = tabId;
   await chrome.storage.session.set({ lastActiveTabId: tabId });
 }
 
-// Returns the best tab to inject the overlay into.
-// Three-tier fallback so the service worker sleeping never silently drops the action.
+/**
+ * Returns the best tab ID to inject confetti into, using a three-tier fallback:
+ * 1. In-memory cache (service worker is still warm).
+ * 2. chrome.storage.session (service worker restarted but browser is still open).
+ * 3. Any active non-chrome tab across all windows (last resort).
+ * @returns {Promise<number|null>} The target tab ID, or null if none is found.
+ */
 async function getTargetTabId() {
   // 1 — in-memory (service worker is still warm)
   if (lastActiveTabId) return lastActiveTabId;
@@ -60,6 +71,14 @@ chrome.tabs.onActivated.addListener(({ tabId }) => {
 
 // ── Core injection helper ──────────────────────────────────────────────────
 
+/**
+ * Injects content.js into the given tab (idempotent) and then calls
+ * `window.__joshConfettiLaunch` with the provided settings.
+ * Logs a warning if the injection fails (e.g. on a restricted page).
+ * @param {number} tabId    - The ID of the tab to inject into.
+ * @param {Object} settings - The confetti settings object to pass to the launch function.
+ * @returns {Promise<void>}
+ */
 async function shootConfetti(tabId, settings) {
   try {
     await chrome.scripting.executeScript({ target: { tabId }, files: ['content.js'] });
@@ -75,6 +94,13 @@ async function shootConfetti(tabId, settings) {
 
 // ── Repeated-shot launcher ─────────────────────────────────────────────────
 
+/**
+ * Fires confetti one or more times on the given tab according to the repeat settings.
+ * When `repeatMode` is `'repeated'`, fires up to 10 shots with 1.5 s gaps between them.
+ * @param {number} tabId    - The ID of the tab to fire confetti on.
+ * @param {Object} settings - The confetti settings object; uses `repeatMode` and `repeatCount`.
+ * @returns {Promise<void>}
+ */
 async function fireWithRepeat(tabId, settings) {
   const shots = settings.repeatMode === 'repeated'
     ? Math.max(1, Math.min(10, settings.repeatCount || 3))

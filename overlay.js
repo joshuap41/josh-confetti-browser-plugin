@@ -436,8 +436,20 @@ if (!window.__joshConfettiOverlayDefined) {
 
   // ── Helpers ────────────────────────────────────────────────────────────────
 
+  /**
+   * Convenience wrapper around `shadow.getElementById`.
+   * @param {string} id - The element ID to look up within the shadow root.
+   * @returns {Element|null} The matching element, or null if not found.
+   */
   function $(id) { return shadow.getElementById(id); }
 
+  /**
+   * Sets a range slider's value, updates its displayed label, and refreshes the
+   * gradient fill to reflect the new thumb position.
+   * @param {string}         id    - The base ID of the slider element (label ID is `${id}-val`).
+   * @param {number}         value - The value to apply to the slider.
+   * @param {Function|null}  fmt   - Optional formatter function for the displayed label text.
+   */
   function setSlider(id, value, fmt) {
     const slider = $(id);
     const valEl  = $(`${id}-val`);
@@ -447,6 +459,11 @@ if (!window.__joshConfettiOverlayDefined) {
     updateFill(slider);
   }
 
+  /**
+   * Updates the CSS gradient background of a range slider to visually fill
+   * the track up to the current thumb position.
+   * @param {HTMLInputElement} slider - The range input element to update.
+   */
   function updateFill(slider) {
     const pct = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
     slider.style.background =
@@ -455,6 +472,10 @@ if (!window.__joshConfettiOverlayDefined) {
 
   // ── Reflect ────────────────────────────────────────────────────────────────
 
+  /**
+   * Syncs every UI control in the panel to the current in-memory settings state.
+   * Should be called after loading settings or performing a bulk state update.
+   */
   function reflectAll() {
     // Pill / mode buttons
     ['confettiType','explosionMode','repeatMode'].forEach(group => {
@@ -474,6 +495,10 @@ if (!window.__joshConfettiOverlayDefined) {
     renderPreview();
   }
 
+  /**
+   * Highlights the density preset pill whose particle count matches `current.particleCount`,
+   * or clears all highlights if no preset matches.
+   */
   function reflectDensityPreset() {
     const activePreset = Object.entries(DENSITY_PRESETS).find(([, v]) => v === current.particleCount)?.[0] ?? null;
     shadow.querySelectorAll('[data-group="densityPreset"]').forEach(btn => {
@@ -481,6 +506,10 @@ if (!window.__joshConfettiOverlayDefined) {
     });
   }
 
+  /**
+   * Highlights the size preset pill whose particle size matches `current.particleSize`,
+   * or clears all highlights if no preset matches.
+   */
   function reflectSizePreset() {
     const activePreset = Object.entries(SIZE_PRESETS).find(([, v]) => v === current.particleSize)?.[0] ?? null;
     shadow.querySelectorAll('[data-group="sizePreset"]').forEach(btn => {
@@ -488,6 +517,10 @@ if (!window.__joshConfettiOverlayDefined) {
     });
   }
 
+  /**
+   * Highlights the speed preset pill whose animation speed matches `current.animationSpeed`,
+   * or clears all highlights if no preset matches.
+   */
   function reflectSpeedPreset() {
     const activePreset = Object.entries(SPEED_PRESETS).find(([, v]) => v === current.animationSpeed)?.[0] ?? null;
     shadow.querySelectorAll('[data-group="speedPreset"]').forEach(btn => {
@@ -495,21 +528,39 @@ if (!window.__joshConfettiOverlayDefined) {
     });
   }
 
+  /**
+   * Shows or hides the repeat-count slider row based on whether `current.repeatMode`
+   * is set to `'repeated'`.
+   */
   function reflectRepeatRow() {
     $('repeat-count-row').classList.toggle('visible', current.repeatMode === 'repeated');
   }
 
+  /**
+   * Returns true if `current.colors` exactly matches the default color palette.
+   * @returns {boolean}
+   */
   function colorsAreDefault() {
     if (current.colors.length !== DEFAULT_COLORS.length) return false;
     return current.colors.every((c, i) => c === DEFAULT_COLORS[i]);
   }
 
+  /**
+   * Returns true if `current.colors` exactly matches the type-specific palette
+   * for the currently selected confetti type.
+   * @returns {boolean}
+   */
   function colorsMatchType() {
     const typeColors = TYPE_COLORS[current.confettiType];
     if (!typeColors || typeColors.length !== current.colors.length) return false;
     return current.colors.every((c, i) => c === typeColors[i]);
   }
 
+  /**
+   * Rebuilds the color swatch grid from `current.colors`.
+   * Renders one swatch per color (with a click-to-remove × button), a + add button,
+   * and optional "Type Colors" / "Default" reset buttons when the palette has drifted.
+   */
   function reflectSwatches() {
     const grid = $('color-swatches');
     grid.innerHTML = '';
@@ -560,6 +611,10 @@ if (!window.__joshConfettiOverlayDefined) {
     }
   }
 
+  /**
+   * Rebuilds the URL trigger list UI from `current.urlTriggers`, then syncs the
+   * "Add URL" button's disabled state.
+   */
   function reflectTriggers() {
     const list = $('trigger-list');
     list.innerHTML = '';
@@ -567,6 +622,12 @@ if (!window.__joshConfettiOverlayDefined) {
     syncAddBtn();
   }
 
+  /**
+   * Appends a new URL trigger row (text input + delete button) to the trigger list.
+   * The input's `input` event syncs changes back to `current.urlTriggers`; the
+   * delete button removes the entry from both the DOM and the array.
+   * @param {string} [value=''] - Initial value to pre-fill in the text input.
+   */
   function addTriggerRow(value = '') {
     const list = $('trigger-list');
     const row   = document.createElement('div');  row.className = 'trigger-row';
@@ -585,12 +646,20 @@ if (!window.__joshConfettiOverlayDefined) {
     row.appendChild(input); row.appendChild(del); list.appendChild(row);
   }
 
+  /**
+   * Disables the "Add URL" button when the maximum of 10 triggers has been reached.
+   */
   function syncAddBtn() {
     $('add-trigger-btn').disabled = current.urlTriggers.length >= 10;
   }
 
   // ── Preview ────────────────────────────────────────────────────────────────
 
+  /**
+   * Renders a static preview of the current particle type and size into the
+   * size-preview canvas. Shows 7 sample particles spread across the canvas width,
+   * drawn using inline shape logic that mirrors the content-script renderers.
+   */
   function renderPreview() {
     const canvas = $('size-preview');
     if (!canvas) return;
@@ -692,6 +761,11 @@ if (!window.__joshConfettiOverlayDefined) {
 
   // ── Listeners ──────────────────────────────────────────────────────────────
 
+  /**
+   * Attaches all event listeners to the overlay's interactive elements.
+   * Handles close/backdrop clicks, Escape key, pill/mode button selection,
+   * slider input, color picker, URL trigger management, sound toggle, and save.
+   */
   function attachListeners() {
     // Close
     $('close-btn').addEventListener('click', () => window.__joshConfettiOverlay.hide());
@@ -809,6 +883,11 @@ if (!window.__joshConfettiOverlayDefined) {
   // ── Public API ─────────────────────────────────────────────────────────────
 
   window.__joshConfettiOverlay = {
+    /**
+     * Loads saved settings from chrome.storage.sync, applies them to the in-memory
+     * state, syncs all UI controls, and makes the overlay panel visible.
+     * @returns {Promise<void>}
+     */
     async show() {
       const stored = await chrome.storage.sync.get(DEFAULTS);
       current = { ...DEFAULTS, ...stored };
@@ -817,6 +896,9 @@ if (!window.__joshConfettiOverlayDefined) {
       reflectAll();
       root.style.display = 'flex';
     },
+    /**
+     * Hides the overlay panel without saving any unsaved changes.
+     */
     hide() {
       root.style.display = 'none';
     }

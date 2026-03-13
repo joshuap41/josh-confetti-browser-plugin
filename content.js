@@ -17,6 +17,12 @@ if (!window.__joshConfettiDefined) {
 
   // ─── Sound Effects ────────────────────────────────────────────────────────
 
+  /**
+   * Plays a synthesized sound effect matched to the given explosion mode.
+   * Uses the Web Audio API to generate the sound procedurally; silently
+   * swallows any errors if the AudioContext is unavailable.
+   * @param {string} mode - The explosion mode (e.g. 'fireworks', 'cannon-left', 'center').
+   */
   function playConfettiSound(mode) {
     try {
       const actx = new (window.AudioContext || window.webkitAudioContext)();
@@ -24,6 +30,11 @@ if (!window.__joshConfettiDefined) {
 
       // ── Shared helpers ──────────────────────────────────────────────────────
 
+      /**
+       * Creates a mono AudioBuffer filled with white noise.
+       * @param {number} duration - Length of the buffer in seconds.
+       * @returns {AudioBuffer} A buffer containing white noise samples.
+       */
       function noiseBuf(duration) {
         const len = Math.floor(actx.sampleRate * duration);
         const buf = actx.createBuffer(1, len, actx.sampleRate);
@@ -32,7 +43,10 @@ if (!window.__joshConfettiDefined) {
         return buf;
       }
 
-      // Single sparkle ting at absolute AudioContext time t
+      /**
+       * Schedules a single high-frequency sparkle "ting" at the given AudioContext time.
+       * @param {number} t - Absolute AudioContext time at which to play the sparkle.
+       */
       function sparkle(t) {
         const freq = 1800 + Math.random() * 3000;
         const osc  = actx.createOscillator();
@@ -47,7 +61,12 @@ if (!window.__joshConfettiDefined) {
         osc.start(t); osc.stop(t + 0.12);
       }
 
-      // Schedule `count` sparkles randomly between now+t0 and now+t1 seconds
+      /**
+       * Schedules `count` sparkle tings randomly distributed between now+t0 and now+t1 seconds.
+       * @param {number} count - Number of sparkles to schedule.
+       * @param {number} t0    - Start of the random window, relative to `now` (seconds).
+       * @param {number} t1    - End of the random window, relative to `now` (seconds).
+       */
       function sparkles(count, t0, t1) {
         for (let i = 0; i < count; i++) sparkle(now + t0 + Math.random() * (t1 - t0));
       }
@@ -96,6 +115,10 @@ if (!window.__joshConfettiDefined) {
       // ── Cannon modes: deep thud + noise blast (+ second shot for side-to-side) ──
 
       } else if (mode === 'cannon-left' || mode === 'cannon-right' || mode === 'side-to-side') {
+        /**
+         * Synthesizes a single cannon-fire sound (low boom + noise blast) at time t.
+         * @param {number} t - Absolute AudioContext time at which to play the shot.
+         */
         function cannonShot(t) {
           // Low boom
           const bm = actx.createOscillator();
@@ -175,6 +198,13 @@ if (!window.__joshConfettiDefined) {
   // replaces fillText (text shaping runs once per size, not every frame).
   const _emojiCache = new Map();
 
+  /**
+   * Returns a pre-rendered off-screen canvas for the given emoji at the given size.
+   * Results are cached by "emoji:fontSize" to avoid repeated text-shaping overhead.
+   * @param {string} emoji - The emoji character to render.
+   * @param {number} size  - The logical particle size; font size is derived from this.
+   * @returns {HTMLCanvasElement} An off-screen canvas containing the rendered emoji.
+   */
   function _getEmojiCanvas(emoji, size) {
     const fontSize = Math.round(size * 1.6 / 4) * 4; // bucket to nearest 4px
     const key = `${emoji}:${fontSize}`;
@@ -195,6 +225,19 @@ if (!window.__joshConfettiDefined) {
 
   // ─── Entry Point ──────────────────────────────────────────────────────────
 
+  /**
+   * Public entry point called by the service worker to launch a confetti animation.
+   * Creates (or reuses) the shared canvas, spawns particles according to `settings`,
+   * sets up cannon/vehicle visuals, and starts the animation loop if not already running.
+   * @param {Object}   settings                  - User-configured animation settings.
+   * @param {string}   settings.explosionMode    - How/where particles originate.
+   * @param {number}   settings.particleCount    - Number of particles to spawn.
+   * @param {number}   settings.particleSize     - Base size of each particle in pixels.
+   * @param {string}   settings.confettiType     - Shape type for particles.
+   * @param {number}   settings.animationSpeed   - Time-scale multiplier for physics.
+   * @param {string[]} settings.colors           - Array of hex color strings.
+   * @param {boolean}  settings.soundEnabled     - Whether to play a sound effect.
+   */
   window.__joshConfettiLaunch = function (settings) {
     if (settings.soundEnabled) playConfettiSound(settings.explosionMode || 'center');
 
@@ -259,6 +302,11 @@ if (!window.__joshConfettiDefined) {
 
   // ─── Animation Loop ───────────────────────────────────────────────────────
 
+  /**
+   * Per-frame animation loop driven by requestAnimationFrame.
+   * Updates and draws all live particles, cannons, and the vehicle overlay.
+   * Tears down the canvas and resets state when everything has faded out.
+   */
   function _loop() {
     if (!_canvas || !document.contains(_canvas)) {
       _animating = false; _particles = []; return;
@@ -325,6 +373,15 @@ if (!window.__joshConfettiDefined) {
 
   // ─── Particle Factory ─────────────────────────────────────────────────────
 
+  /**
+   * Creates and returns a new particle object with initial position, velocity,
+   * and visual properties derived from the current settings and explosion mode.
+   * @param {Object}   settings            - User-configured animation settings.
+   * @param {number}   W                   - Canvas width in pixels.
+   * @param {number}   H                   - Canvas height in pixels.
+   * @param {string[]} colors              - Array of hex color strings to sample from.
+   * @returns {Object} A particle object ready to be updated and drawn each frame.
+   */
   function createParticle(settings, W, H, colors) {
     const color   = colors[Math.floor(Math.random() * colors.length)];
     const emoji   = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
@@ -419,6 +476,14 @@ if (!window.__joshConfettiDefined) {
 
   // ─── Physics Update ───────────────────────────────────────────────────────
 
+  /**
+   * Advances a single particle's physics state by one time step.
+   * Applies gravity, drag, rotation, wobble, and opacity fade.
+   * Marks the particle dead when it leaves the viewport or fully fades out.
+   * @param {Object} p - The particle object to update (mutated in place).
+   * @param {number} W - Canvas width in pixels (used for out-of-bounds check).
+   * @param {number} H - Canvas height in pixels (used for fade and out-of-bounds check).
+   */
   function updateParticle(p, W, H) {
     // spd is a time-scale multiplier: fast = same trajectory, fewer frames to complete it
     const s = p.spd;
@@ -455,6 +520,13 @@ if (!window.__joshConfettiDefined) {
 
   // ─── Dispatch Draw ────────────────────────────────────────────────────────
 
+  /**
+   * Draws a single particle onto the canvas by dispatching to the appropriate
+   * shape renderer based on the particle's `type` property.
+   * Saves and restores canvas state around the draw call.
+   * @param {CanvasRenderingContext2D} ctx - The 2D rendering context to draw onto.
+   * @param {Object}                  p   - The particle to draw.
+   */
   function drawParticle(ctx, p) {
     ctx.save();
     ctx.globalAlpha = p.opacity;
@@ -482,6 +554,11 @@ if (!window.__joshConfettiDefined) {
 
   // ─── Shape Renderers ──────────────────────────────────────────────────────
 
+  /**
+   * Draws a classic rectangular confetti piece, wobbling along its horizontal axis.
+   * @param {CanvasRenderingContext2D} ctx - Canvas context (pre-translated/rotated).
+   * @param {Object}                  p   - Particle with `size`, `color`, and `wobble`.
+   */
   function drawClassic(ctx, p) {
     const w = p.size * Math.max(0.05, Math.abs(Math.cos(p.wobble)));
     const h = p.size * 0.45;
@@ -489,6 +566,11 @@ if (!window.__joshConfettiDefined) {
     ctx.fillRect(-w * 0.5, -h * 0.5, w, h);
   }
 
+  /**
+   * Draws a 5-pointed star particle.
+   * @param {CanvasRenderingContext2D} ctx - Canvas context (pre-translated/rotated).
+   * @param {Object}                  p   - Particle with `size` and `color`.
+   */
   function drawStar(ctx, p) {
     ctx.fillStyle = p.color;
     const R = p.size * 0.55, ir = R * 0.42;
@@ -504,6 +586,11 @@ if (!window.__joshConfettiDefined) {
     ctx.fill();
   }
 
+  /**
+   * Draws a solid circle particle.
+   * @param {CanvasRenderingContext2D} ctx - Canvas context (pre-translated/rotated).
+   * @param {Object}                  p   - Particle with `size` and `color`.
+   */
   function drawCircle(ctx, p) {
     ctx.fillStyle = p.color;
     ctx.beginPath();
@@ -511,6 +598,11 @@ if (!window.__joshConfettiDefined) {
     ctx.fill();
   }
 
+  /**
+   * Draws a wavy ribbon particle as a stroked sinusoidal path.
+   * @param {CanvasRenderingContext2D} ctx - Canvas context (pre-translated/rotated).
+   * @param {Object}                  p   - Particle with `size`, `color`, and `phase`.
+   */
   function drawRibbon(ctx, p) {
     ctx.strokeStyle = p.color;
     ctx.lineWidth   = 2.5;
@@ -526,6 +618,12 @@ if (!window.__joshConfettiDefined) {
     ctx.stroke();
   }
 
+  /**
+   * Draws an emoji particle using a pre-rendered off-screen canvas.
+   * Cancels the inherited rotation and applies a gentle wobble instead.
+   * @param {CanvasRenderingContext2D} ctx - Canvas context (pre-translated/rotated).
+   * @param {Object}                  p   - Particle with `emoji`, `size`, `rotation`, and `wobble`.
+   */
   function drawEmoji(ctx, p) {
     ctx.rotate(-p.rotation);
     ctx.rotate(Math.sin(p.wobble) * 0.35);
@@ -535,6 +633,11 @@ if (!window.__joshConfettiDefined) {
 
   // ─── New Shape Renderers ──────────────────────────────────────────────────
 
+  /**
+   * Draws a heart-shaped particle using two bezier curves.
+   * @param {CanvasRenderingContext2D} ctx - Canvas context (pre-translated/rotated).
+   * @param {Object}                  p   - Particle with `size` and `color`.
+   */
   function drawHeart(ctx, p) {
     ctx.fillStyle = p.color;
     const s = p.size * 0.5;
@@ -546,6 +649,11 @@ if (!window.__joshConfettiDefined) {
     ctx.fill();
   }
 
+  /**
+   * Draws a diamond (rhombus) particle.
+   * @param {CanvasRenderingContext2D} ctx - Canvas context (pre-translated/rotated).
+   * @param {Object}                  p   - Particle with `size` and `color`.
+   */
   function drawDiamond(ctx, p) {
     ctx.fillStyle = p.color;
     const s = p.size * 0.55;
@@ -558,6 +666,11 @@ if (!window.__joshConfettiDefined) {
     ctx.fill();
   }
 
+  /**
+   * Draws an equilateral triangle particle.
+   * @param {CanvasRenderingContext2D} ctx - Canvas context (pre-translated/rotated).
+   * @param {Object}                  p   - Particle with `size` and `color`.
+   */
   function drawTriangle(ctx, p) {
     ctx.fillStyle = p.color;
     const s = p.size * 0.6;
@@ -569,6 +682,11 @@ if (!window.__joshConfettiDefined) {
     ctx.fill();
   }
 
+  /**
+   * Draws a 6-armed snowflake particle with branch ticks at 60% of each arm.
+   * @param {CanvasRenderingContext2D} ctx - Canvas context (pre-translated/rotated).
+   * @param {Object}                  p   - Particle with `size` and `color`.
+   */
   function drawSnowflake(ctx, p) {
     ctx.strokeStyle = p.color;
     ctx.lineWidth = Math.max(1, p.size * 0.1);
@@ -588,8 +706,12 @@ if (!window.__joshConfettiDefined) {
     }
   }
 
+  /**
+   * Draws a 4-point elongated star (spark) particle.
+   * @param {CanvasRenderingContext2D} ctx - Canvas context (pre-translated/rotated).
+   * @param {Object}                  p   - Particle with `size` and `color`.
+   */
   function drawSpark(ctx, p) {
-    // 4-point elongated star
     ctx.fillStyle = p.color;
     const R = p.size * 0.56, ir = R * 0.18;
     ctx.beginPath();
@@ -604,6 +726,12 @@ if (!window.__joshConfettiDefined) {
     ctx.fill();
   }
 
+  /**
+   * Draws a coin particle as a wobbling ellipse with an optional inner ring highlight.
+   * The horizontal radius collapses as the coin turns edge-on (via cosine wobble).
+   * @param {CanvasRenderingContext2D} ctx - Canvas context (pre-translated/rotated).
+   * @param {Object}                  p   - Particle with `size`, `color`, and `wobble`.
+   */
   function drawCoin(ctx, p) {
     const rx = p.size * 0.45 * Math.max(0.08, Math.abs(Math.cos(p.wobble)));
     const ry = p.size * 0.45;
@@ -620,6 +748,12 @@ if (!window.__joshConfettiDefined) {
     }
   }
 
+  /**
+   * Draws a teardrop particle using an arc for the rounded top and bezier curves
+   * that taper to a point at the bottom.
+   * @param {CanvasRenderingContext2D} ctx - Canvas context (pre-translated/rotated).
+   * @param {Object}                  p   - Particle with `size` and `color`.
+   */
   function drawTeardrop(ctx, p) {
     ctx.fillStyle = p.color;
     const s = p.size * 0.5;
@@ -633,6 +767,13 @@ if (!window.__joshConfettiDefined) {
 
   // ─── Gator + Fireworks Trailer Renderer ──────────────────────────────────
 
+  /**
+   * Draws the Gator vehicle and fireworks trailer SVG onto the canvas, along with
+   * radial gradient flash effects for each tube that has recently fired.
+   * No-ops if the vehicle image has not yet loaded.
+   * @param {CanvasRenderingContext2D} ctx - The 2D rendering context to draw onto.
+   * @param {Object}                  v   - Vehicle state with position, opacity, and tubeFlash arrays.
+   */
   function drawGatorTrailer(ctx, v) {
     if (!_vehicleImg) return;
     ctx.save();
@@ -664,6 +805,13 @@ if (!window.__joshConfettiDefined) {
 
   // ─── Cannon Renderer ──────────────────────────────────────────────────────
 
+  /**
+   * Draws a decorative cannon (barrel, carriage, wheels, and muzzle flash) on the
+   * left or right edge of the canvas. The cannon fades out over time after firing.
+   * @param {CanvasRenderingContext2D} ctx - The 2D rendering context to draw onto.
+   * @param {Object}                  c   - Cannon state: `side`, `y`, `opacity`, `flash`, `age`.
+   * @param {number}                  W   - Canvas width in pixels (used to position the right cannon).
+   */
   function drawCannon(ctx, c, W) {
     ctx.save();
     ctx.globalAlpha = c.opacity;
