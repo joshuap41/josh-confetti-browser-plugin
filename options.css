@@ -42,33 +42,38 @@ body {
 /* ── Header ───────────────────────────────────── */
 .header {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 14px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 2px;
+  gap: 6px;
+  padding: 16px 0 8px;
 }
 
 .header-icon {
-  font-size: 40px;
+  font-size: 52px;
   line-height: 1;
-  flex-shrink: 0;
-  filter: drop-shadow(0 0 10px rgba(162,155,254,0.55));
+  filter: drop-shadow(0 0 16px rgba(162,155,254,0.7));
 }
 
 .header-title {
-  font-size: 22px;
-  font-weight: 700;
-  background: linear-gradient(90deg, #a29bfe, #fd79a8, #ffd93d);
+  font-size: 32px;
+  font-weight: 800;
+  background: linear-gradient(90deg, #a29bfe, #fd79a8, #ffd93d, #6bcb77, #a29bfe, #fd79a8, #ffd93d);
+  background-size: 300% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  letter-spacing: -0.01em;
+  animation: title-shimmer 4s linear infinite;
+}
+
+@keyframes title-shimmer {
+  0%   { background-position: 0% center; }
+  100% { background-position: 300% center; }
 }
 
 .header-sub {
   color: var(--text-muted);
-  font-size: 12px;
-  margin-top: 1px;
+  font-size: 13px;
 }
 
 /* ── Two-column grid ──────────────────────────── */

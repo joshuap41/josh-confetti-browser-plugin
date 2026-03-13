@@ -11,10 +11,8 @@
 
     <header class="header">
       <div class="header-icon">🎉</div>
-      <div>
-        <h1 class="header-title">Josh's Confetti 🎉</h1>
-        <p class="header-sub">Configure your celebration settings</p>
-      </div>
+      <h1 class="header-title">Josh's Confetti</h1>
+      <p class="header-sub">Configure your celebration settings</p>
     </header>
 
     <!-- ── Row 1: Particle Count + Particle Size ────────────────────────── -->
@@ -26,7 +24,7 @@
           <span class="slider-label">Number of particles</span>
           <span class="slider-val accent" id="particle-count-val">150</span>
         </div>
-        <input type="range" class="slider" id="particle-count" min="10" max="1000" step="10" value="150" />
+        <input type="range" class="slider" id="particle-count" min="10" max="5000" step="10" value="750" />
         <p class="card-hint">High amounts may affect performance</p>
       </section>
 
@@ -93,49 +91,42 @@
             <span class="mode-name">Side-to-Side</span>
             <span class="mode-desc">Both sides fire</span>
           </button>
+          <button class="mode-btn" data-value="fireworks" data-group="explosionMode">
+            <span class="mode-arrow">🎆</span>
+            <span class="mode-name">Fireworks</span>
+            <span class="mode-desc">Grand finale</span>
+          </button>
         </div>
       </section>
 
     </div>
 
-    <!-- ── Row 3: Animation Direction + Repeated Confetti ───────────────── -->
-    <!-- Paired because both are compact option sections                     -->
+    <!-- ── Row 3: Speed + Repeated Confetti ────────────────────────────── -->
     <div class="grid-2">
 
       <section class="card">
-        <h2 class="card-title"><span class="sparkle">✦</span> Animation Direction</h2>
-        <div class="check-group" id="direction-group">
-          <label class="check-label">
-            <input type="checkbox" class="dir-cb" value="fall-down" />
-            <span class="check-box"></span>
-            <span class="check-text">⬇️ Fall Down</span>
-          </label>
-          <label class="check-label">
-            <input type="checkbox" class="dir-cb" value="rise-up" />
-            <span class="check-box"></span>
-            <span class="check-text">⬆️ Rise Up</span>
-          </label>
-          <label class="check-label">
-            <input type="checkbox" class="dir-cb" value="random" />
-            <span class="check-box"></span>
-            <span class="check-text">🔀 Random</span>
-          </label>
+        <h2 class="card-title"><span class="sparkle">✦</span> Animation Speed</h2>
+        <div class="slider-header">
+          <span class="slider-label">Particle speed multiplier</span>
+          <span class="slider-val accent" id="animation-speed-val">1x</span>
         </div>
+        <input type="range" class="slider" id="animation-speed" min="0.25" max="3" step="0.25" value="1" />
+        <p class="card-hint">Affects velocity &amp; gravity of all particles</p>
       </section>
 
       <section class="card">
         <h2 class="card-title"><span class="sparkle">✦</span> Repeated Confetti</h2>
-        <div class="pill-group" id="repeat-mode-group">
-          <button class="pill" data-value="single"   data-group="repeatMode"><span class="pill-icon">🎯</span> Single Shot</button>
-          <button class="pill" data-value="repeated" data-group="repeatMode"><span class="pill-icon">🔁</span> Repeated</button>
+      <div class="pill-group" id="repeat-mode-group">
+        <button class="pill" data-value="single"   data-group="repeatMode"><span class="pill-icon">🎯</span> Single Shot</button>
+        <button class="pill" data-value="repeated" data-group="repeatMode"><span class="pill-icon">🔁</span> Repeated</button>
+      </div>
+      <div class="repeat-count-row" id="repeat-count-row">
+        <div class="slider-header">
+          <span class="slider-label">Repeat count</span>
+          <span class="slider-val accent" id="repeat-count-val">3</span>
         </div>
-        <div class="repeat-count-row" id="repeat-count-row">
-          <div class="slider-header">
-            <span class="slider-label">Repeat count</span>
-            <span class="slider-val accent" id="repeat-count-val">3</span>
-          </div>
-          <input type="range" class="slider" id="repeat-count" min="1" max="10" step="1" value="3" />
-        </div>
+        <input type="range" class="slider" id="repeat-count" min="1" max="10" step="1" value="3" />
+      </div>
       </section>
 
     </div>
