@@ -21,8 +21,8 @@
   "commands": {
     "fire-confetti": {
       "suggested_key": {
-        "default": "Ctrl+B",
-        "mac": "Command+B"
+        "default": "Ctrl+1",
+        "mac": "Command+1"
       },
       "description": "Fire confetti on the current page"
     }

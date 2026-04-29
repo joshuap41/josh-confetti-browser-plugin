@@ -33,7 +33,7 @@ if (!window.__joshConfettiOverlayDefined) {
 
   const DEFAULTS = {
     confettiType:   'classic',
-    particleCount:  500,
+    particleCount:  4000,
     particleSize:   50,
     animationSpeed: 0.2,
     explosionMode:  'fireworks',

@@ -8,7 +8,7 @@ const DEFAULT_COLORS = [
 
 const DEFAULT_SETTINGS = {
   confettiType:       'classic',
-  particleCount:      500,
+  particleCount:      4000,
   particleSize:       50,
   animationSpeed:     0.2,
   explosionMode:      'fireworks',
