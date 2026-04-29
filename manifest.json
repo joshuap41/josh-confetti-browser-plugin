@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Josh's Confetti 🎉",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Launch celebratory confetti on any page! 12 types, density presets, sound effects, and more.",
   "icons": {
     "16": "icons/icon16.png",

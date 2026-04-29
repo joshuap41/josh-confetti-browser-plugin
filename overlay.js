@@ -284,7 +284,7 @@ if (!window.__joshConfettiOverlayDefined) {
         <div class="panel-header">
           <span class="panel-title">🎉 Josh's Confetti</span>
           <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
-            <span class="version-tag">v2.0</span>
+            <span class="version-tag">v2.1</span>
             <button class="close-btn" id="close-btn">✕</button>
           </div>
         </div>
